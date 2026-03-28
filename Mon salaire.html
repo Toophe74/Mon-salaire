@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Mon Salaire"/>
+  <title>Mon Salaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{background:#0b0e14;min-height:100%;overscroll-behavior:none;}
+    body{font-family:'DM Mono',monospace;color:#e8e4d9;max-width:430px;margin:0 auto;}
+    input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;color:#e8e4d9;-webkit-appearance:none;}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+    input::placeholder{color:#444;}
+    select{-webkit-appearance:none;appearance:none;background:#1c2133;border:1px solid #2a3050;color:#e8e4d9;font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;border-radius:8px;outline:none;}
+
+    .add-btn{background:transparent;border:1px dashed #2a3050;color:#555;font-family:'DM Mono',monospace;font-size:13px;padding:14px;border-radius:12px;cursor:pointer;width:100%;margin-top:10px;}
+    .add-btn:active{border-color:#c8f060;color:#c8f060;background:rgba(200,240,96,0.05);}
+    .tab-btn{background:transparent;border:none;cursor:pointer;font-family:'DM Mono',monospace;padding:10px 0;flex:1;font-size:10px;}
+    .del-btn{background:rgba(255,100,100,0.1);border:none;color:#ff6b6b;font-size:15px;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .del-btn:active{background:rgba(255,100,100,0.25);}
+    .nav-btn{background:rgba(255,255,255,0.06);border:1px solid #2a3050;color:#aaa;font-size:18px;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .nav-btn:active{background:rgba(255,255,255,0.14);}
+    .divrow{border-bottom:1px solid #161b28;}
+    .confirm-yes{background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.4);color:#ff6b6b;font-family:'DM Mono',monospace;font-size:13px;padding:12px;border-radius:10px;cursor:pointer;flex:1;}
+    .confirm-no{background:rgba(255,255,255,0.05);border:1px solid #2a3050;color:#aaa;font-family:'DM Mono',monospace;font-size:13px;padding:12px;border-radius:10px;cursor:pointer;flex:1;}
+    .confirm-yes-green{background:rgba(200,240,96,0.12);border:1px solid rgba(200,240,96,0.35);color:#c8f060;font-family:'DM Mono',monospace;font-size:13px;padding:12px;border-radius:10px;cursor:pointer;flex:1;}
+    .confirm-yes-orange{background:rgba(255,166,0,0.12);border:1px solid rgba(255,166,0,0.35);color:#ffa600;font-family:'DM Mono',monospace;font-size:13px;padding:12px;border-radius:10px;cursor:pointer;flex:1;}
+    .vac-add-full{background:rgba(200,240,96,0.08);border:1px solid rgba(200,240,96,0.25);color:#c8f060;font-family:'DM Mono',monospace;font-size:13px;padding:14px;border-radius:12px;cursor:pointer;width:100%;margin-bottom:10px;}
+    .vac-use-full{background:rgba(255,166,0,0.08);border:1px solid rgba(255,166,0,0.25);color:#ffa600;font-family:'DM Mono',monospace;font-size:13px;padding:14px;border-radius:12px;cursor:pointer;width:100%;}
+    .vac-edit-btn{background:rgba(255,166,0,0.1);border:1px solid rgba(255,166,0,0.3);color:#ffa600;font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;margin-top:8px;}
+    .save-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(200,240,96,0.1);border:1px solid rgba(200,240,96,0.25);color:#c8f060;font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:20px;letter-spacing:0.05em;}
+    .hist-row{background:#10141f;border:1px solid #1e2433;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;}
+    .hist-row:active{border-color:#3a4060;}
+    .hist-row-current{border-color:rgba(200,240,96,0.35)!important;background:rgba(200,240,96,0.04)!important;}
+    .hist-chip{background:rgba(255,255,255,0.04);border:1px solid #1e2433;border-radius:8px;padding:4px 10px;font-size:11px;font-family:'DM Mono',monospace;}
+    .month-btn{background:transparent;border:1px solid transparent;color:#aaa;font-family:'DM Mono',monospace;font-size:12px;padding:8px 4px;border-radius:8px;cursor:pointer;text-align:center;}
+    .month-btn.active{background:rgba(200,240,96,0.15);border-color:rgba(200,240,96,0.4);color:#c8f060;}
+    .year-btn{background:transparent;border:1px solid #2a3050;color:#666;font-family:'DM Mono',monospace;font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;}
+    .year-btn.active{background:rgba(200,240,96,0.12);border-color:rgba(200,240,96,0.35);color:#c8f060;}
+
+    /* Layout helpers */
+    .hero{padding:16px 20px 20px;background:linear-gradient(180deg,#0f1420 0%,#0b0e14 100%);text-align:center;border-bottom:1px solid #161b28;}
+    .tabs{display:flex;background:#0d111a;border-bottom:1px solid #161b28;position:sticky;top:0;z-index:10;}
+    .content{padding:16px 16px 0;}
+    .card{background:#10141f;border:1px solid #1e2433;border-radius:16px;padding:16px;margin-bottom:10px;}
+    .auto-card{background:#10141f;border:1px solid #1e2433;border-radius:14px;padding:14px;margin-bottom:10px;}
+    .recap-card{background:#10141f;border:1px solid #1e2433;border-radius:16px;padding:16px;margin-bottom:12px;}
+    .net-final{background:rgba(200,240,96,0.07);border:1px solid rgba(200,240,96,0.2);border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:20px;}
+    .vac-card{background:rgba(255,166,0,0.07);border:1px solid rgba(255,166,0,0.25);border-radius:20px;padding:24px 20px;text-align:center;margin-bottom:14px;}
+    .brut-recap{background:#10141f;border:1px solid #1e2433;border-radius:16px;padding:16px;margin-top:8px;margin-bottom:16px;}
+    .separator{font-size:11px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin:18px 0 12px;display:flex;align-items:center;gap:10px;}
+    .sep-line{flex:1;height:1px;background:#1e2433;}
+    .input-group{flex:1;display:flex;flex-direction:column;}
+    .input-label{font-size:10px;color:#555;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+    .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#e8e4d9;margin-bottom:14px;letter-spacing:-0.01em;}
+    .mois-picker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+    .confirm-row{display:flex;gap:10px;}
+    .row-flex{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .fields-row{display:flex;gap:12px;}
+    .recap-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;}
+    .recap-total{display:flex;justify-content:space-between;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding-top:12px;margin-top:4px;color:#e8e4d9;}
+    .recap-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #1e2433;display:flex;align-items:center;}
+    .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+    .bar-track{height:3px;background:#1e2433;border-radius:2px;margin-top:12px;overflow:hidden;}
+    .hidden{display:none!important;}
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div style="height:44px;background:#0b0e14;"></div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div id="mois-row" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;">
+      <button class="nav-btn" onclick="prevMois()">‹</button>
+      <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;min-width:130px;" onclick="toggleMoisPicker()">
+        <span id="hero-mois" style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#e8e4d9;line-height:1;"></span>
+        <span id="hero-annee" style="font-size:13px;color:#555;margin-top:2px;"></span>
+      </div>
+      <button class="nav-btn" onclick="nextMois()">›</button>
+    </div>
+
+    <!-- Month picker -->
+    <div id="mois-picker" class="card hidden" style="margin-bottom:14px;text-align:left;">
+      <div class="mois-picker-grid" id="mois-picker-grid"></div>
+      <div style="display:flex;justify-content:center;gap:12px;margin-top:10px;" id="year-picker"></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-bottom:10px;">
+      <span class="save-badge">● Sauvegarde auto activée</span>
+    </div>
+    <div style="font-size:10px;letter-spacing:0.2em;color:#555;text-transform:uppercase;margin-bottom:8px;">NET À PAYER</div>
+    <div id="hero-net" style="font-family:'Syne',sans-serif;font-size:40px;font-weight:800;color:#c8f060;letter-spacing:-0.02em;line-height:1;"></div>
+    <div style="display:flex;justify-content:center;gap:20px;margin-top:12px;font-size:12px;color:#777;">
+      <div style="display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:#c8f060;display:inline-block;"></span><span id="hero-brut"></span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff6b6b;display:inline-block;"></span><span id="hero-charges" style="color:#ff8a80;"></span></div>
+    </div>
+    <div id="hero-heures" style="font-size:11px;color:#555;margin-top:8px;"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn" onclick="setTab('heures')"   id="tab-heures">⏱ Heures</button>
+    <button class="tab-btn" onclick="setTab('charges')"  id="tab-charges">📋 Charges</button>
+    <button class="tab-btn" onclick="setTab('vacances')" id="tab-vacances">🏖 Vacances</button>
+    <button class="tab-btn" onclick="setTab('historique')" id="tab-historique">📅 Historique</button>
+    <button class="tab-btn" onclick="setTab('recap')"    id="tab-recap">💰 Récap</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div id="pane-heures"></div>
+    <div id="pane-charges"></div>
+    <div id="pane-vacances"></div>
+    <div id="pane-historique"></div>
+    <div id="pane-recap"></div>
+  </div>
+  <div style="height:40px;"></div>
+</div>
+
+<script>
+// ─── Constants & Storage ─────────────────────────────────────────────────────
+const MOIS_LABELS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const STORAGE_KEY = "salaire_app_v2";
+const VAC_KEY = "provision_vacances_cumul";
+
+function monthKey(m,y){return `${y}-${String(m+1).padStart(2,"0")}`;}
+function round2(v){return Math.round((v||0)*100)/100;}
+function fmt(v){return round2(v).toLocaleString("fr-FR",{style:"currency",currency:"EUR"});}
+
+function loadAll(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):{}}catch{return {};}}
+function saveAll(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch{}}
+function loadVac(){try{const s=localStorage.getItem(VAC_KEY);return s?parseFloat(s):0;}catch{return 0;}}
+function saveVac(v){try{localStorage.setItem(VAC_KEY,String(v));}catch{}}
+
+const DEFAULT_CATS = [
+  {id:1,label:"Heures normales",tauxHoraire:20,heures:0,type:"gain"},
+  {id:2,label:"Heures supplémentaires (25%)",tauxHoraire:25,heures:0,type:"gain"},
+];
+const DEFAULT_CHARGES = [
+  {id:1,label:"Cotisation retraite",taux:6.9},
+  {id:2,label:"Assurance maladie",taux:0.75},
+  {id:3,label:"Assurance chômage",taux:2.4},
+];
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let now = new Date();
+let curMois = now.getMonth();
+let curAnnee = now.getFullYear();
+let currentTab = "heures";
+let allMonths = loadAll();
+let vacancesCumul = loadVac();
+let showMoisPicker = false;
+let nextId = 50;
+
+function blankMonthFrom(tmpl){
+  return {
+    categories:(tmpl&&tmpl.categories?tmpl.categories:DEFAULT_CATS).map(c=>({...c,heures:0})),
+    charges:(tmpl&&tmpl.charges?tmpl.charges:DEFAULT_CHARGES).map(c=>({...c})),
+  };
+}
+
+function getCurrentData(){
+  const k = monthKey(curMois,curAnnee);
+  if(allMonths[k]) return allMonths[k];
+  const keys = Object.keys(allMonths).sort();
+  const last = keys[keys.length-1];
+  return blankMonthFrom(allMonths[last]);
+}
+
+function persistCurrent(data){
+  const k = monthKey(curMois,curAnnee);
+  allMonths[k] = data;
+  saveAll(allMonths);
+}
+
+// ─── Calculations ─────────────────────────────────────────────────────────
+function calc(data){
+  const cats = data.categories;
+  const chs  = data.charges;
+  const heuresBase = cats.reduce((s,c)=>{
+    const v=(parseFloat(c.heures)||0)*(parseFloat(c.tauxHoraire)||0);
+    return c.type==="gain"?s+v:s-v;
+  },0);
+  const joursFeeries = round2(heuresBase*0.0227);
+  const treizieme    = round2(heuresBase*0.0833);
+  const brutTotal    = round2(heuresBase+joursFeeries+treizieme);
+  const provVac      = round2(heuresBase*0.1065);
+  const totalCharges = round2(chs.reduce((s,c)=>s+brutTotal*(parseFloat(c.taux)||0)/100,0));
+  const net          = round2(brutTotal-totalCharges);
+  const totalHeures  = cats.reduce((s,c)=>s+(parseFloat(c.heures)||0),0);
+  return {heuresBase,joursFeeries,treizieme,brutTotal,provVac,totalCharges,net,totalHeures};
+}
+
+// ─── Render helpers ────────────────────────────────────────────────────────
+function el(tag,attrs,children){
+  const e=document.createElement(tag);
+  Object.entries(attrs||{}).forEach(([k,v])=>{
+    if(k==="style"&&typeof v==="object") Object.assign(e.style,v);
+    else if(k.startsWith("on")) e[k]=v;
+    else if(k==="className") e.className=v;
+    else e.setAttribute(k,v);
+  });
+  (children||[]).forEach(c=>{
+    if(c==null) return;
+    e.appendChild(typeof c==="string"?document.createTextNode(c):c);
+  });
+  return e;
+}
+function div(attrs,children){return el("div",attrs,children);}
+function span(attrs,children){return el("span",attrs,children);}
+function btn(attrs,children){return el("button",attrs,children);}
+function inp(attrs){return el("input",attrs);}
+
+// ─── Update hero ──────────────────────────────────────────────────────────
+function updateHero(){
+  const data=getCurrentData();
+  const {net,brutTotal,totalCharges,totalHeures}=calc(data);
+  document.getElementById("hero-mois").textContent=MOIS_LABELS[curMois];
+  document.getElementById("hero-annee").textContent=curAnnee;
+  document.getElementById("hero-net").textContent=fmt(net);
+  document.getElementById("hero-brut").textContent="Brut "+fmt(brutTotal);
+  document.getElementById("hero-charges").textContent="−"+fmt(totalCharges);
+  document.getElementById("hero-heures").textContent=totalHeures>0?totalHeures+"h travaillées ce mois":"";
+}
+
+// ─── Tab switching ────────────────────────────────────────────────────────
+const TAB_COLORS={heures:"#c8f060",charges:"#ff8a80",vacances:"#ffa600",historique:"#b28fff",recap:"#7eb8ff"};
+function setTab(t){
+  currentTab=t;
+  ["heures","charges","vacances","historique","recap"].forEach(id=>{
+    document.getElementById("pane-"+id).style.display=id===t?"block":"none";
+    const tb=document.getElementById("tab-"+id);
+    tb.style.color=id===t?TAB_COLORS[id]:"#555";
+    tb.style.borderBottom=id===t?`2px solid ${TAB_COLORS[id]}`:"2px solid transparent";
+    tb.style.fontWeight=id===t?"500":"400";
+  });
+  renderPane(t);
+}
+
+// ─── Render panes ─────────────────────────────────────────────────────────
+function renderPane(t){
+  updateHero();
+  if(t==="heures")     renderHeures();
+  if(t==="charges")    renderCharges();
+  if(t==="vacances")   renderVacances();
+  if(t==="historique") renderHistorique();
+  if(t==="recap")      renderRecap();
+}
+
+// ─── HEURES ───────────────────────────────────────────────────────────────
+function renderHeures(){
+  const data=getCurrentData();
+  const {heuresBase,joursFeeries,treizieme,brutTotal,provVac}=calc(data);
+  const pane=document.getElementById("pane-heures");
+  pane.innerHTML="";
+
+  const wrap=div({});
+  wrap.appendChild(div({className:"section-title"},["Heures & gains"]));
+
+  data.categories.forEach(cat=>{
+    const montant=(parseFloat(cat.heures)||0)*(parseFloat(cat.tauxHoraire)||0);
+    const card=div({className:"card"});
+
+    // top row
+    const topRow=div({className:"row-flex"});
+    const sel=el("select",{onchange:e=>{cat.type=e.target.value;persistCurrent(data);renderPane("heures");}});
+    [["gain","＋ Gain"],["retenue","－ Retenue"]].forEach(([v,l])=>{
+      const o=el("option",{value:v},[l]);
+      if(cat.type===v) o.selected=true;
+      sel.appendChild(o);
+    });
+    topRow.appendChild(sel);
+
+    const labelSpan=span({style:{flex:"1",fontSize:"14px",color:"#e8e4d9",cursor:"text"}});
+    labelSpan.textContent=cat.label+" ";
+    labelSpan.appendChild(span({style:{color:"#444",fontSize:"11px"}},["✎"]));
+    labelSpan.onclick=()=>{
+      const inp2=el("input",{type:"text",value:cat.label,
+        style:{flex:"1",fontSize:"14px",borderBottom:"1px solid #c8f060",paddingBottom:"2px",background:"transparent",border:"none",outline:"none",fontFamily:"'DM Mono',monospace",color:"#e8e4d9",width:"100%"},
+        onblur:e=>{cat.label=e.target.value;persistCurrent(data);renderPane("heures");}
+      });
+      inp2.onkeydown=e=>{if(e.key==="Enter")inp2.blur();};
+      labelSpan.replaceWith(inp2);
+      inp2.focus();
+    };
+    topRow.appendChild(labelSpan);
+    topRow.appendChild(btn({className:"del-btn",onclick:()=>{data.categories=data.categories.filter(c=>c.id!==cat.id);persistCurrent(data);renderPane("heures");}},["×"]));
+    card.appendChild(topRow);
+
+    // fields row
+    const fields=div({className:"fields-row"});
+
+    const g1=div({className:"input-group"});
+    g1.appendChild(div({className:"input-label"},["€ / heure"]));
+    const i1=inp({type:"number",inputmode:"decimal",min:"0",step:"0.01",value:cat.tauxHoraire,className:"num-input"});
+    i1.oninput=e=>{cat.tauxHoraire=e.target.value;persistCurrent(data);renderPane("heures");};
+    g1.appendChild(i1);
+    fields.appendChild(g1);
+
+    const g2=div({className:"input-group"});
+    g2.appendChild(div({className:"input-label"},["Heures"]));
+    const i2=inp({type:"number",inputmode:"decimal",min:"0",step:"0.5",value:cat.heures});
+    Object.assign(i2.style,{color:"#c8f060",fontSize:"15px",fontFamily:"'DM Mono'",textAlign:"right",width:"100%",padding:"6px 0",borderBottom:"1px solid #2a3050",background:"transparent",border:"none",outline:"none",borderBottom:"1px solid #2a3050"});
+    i2.oninput=e=>{cat.heures=e.target.value;persistCurrent(data);renderPane("heures");};
+    g2.appendChild(i2);
+    fields.appendChild(g2);
+
+    const g3=div({className:"input-group",style:{alignItems:"flex-end"}});
+    g3.appendChild(div({className:"input-label"},["Montant"]));
+    g3.appendChild(div({style:{fontSize:"14px",fontFamily:"'DM Mono'",textAlign:"right",color:cat.type==="retenue"?"#ff8a80":"#e8e4d9",padding:"6px 0",borderBottom:"1px solid #2a3050"}},[(cat.type==="retenue"?"−":"")+fmt(montant)]));
+    fields.appendChild(g3);
+
+    card.appendChild(fields);
+    wrap.appendChild(card);
+  });
+
+  const addCatBtn=btn({className:"add-btn",onclick:()=>{
+    const n={id:nextId++,label:"Nouvelle catégorie",tauxHoraire:0,heures:0,type:"gain"};
+    data.categories.push(n);persistCurrent(data);renderPane("heures");
+  }},["＋ Ajouter une catégorie"]);
+  wrap.appendChild(addCatBtn);
+
+  // Separator
+  const sep=div({className:"separator"});
+  sep.appendChild(div({className:"sep-line"}));
+  sep.appendChild(span({},[" Compléments auto "]));
+  sep.appendChild(div({className:"sep-line"}));
+  wrap.appendChild(sep);
+
+  // Auto cards
+  const autoItems=[
+    {icon:"🗓",title:"Jours fériés",sub:"2,27% × brut de base",amount:joursFeeries,color:"#7eb8ff",barW:Math.min((joursFeeries/(heuresBase||1))*400,100)},
+    {icon:"🎁",title:"13ème salaire (prorata)",sub:"× 0,0833 du brut de base",amount:treizieme,color:"#c8f060",barW:Math.min((treizieme/(heuresBase||1))*800,100)},
+  ];
+  autoItems.forEach(item=>{
+    const card=div({className:"auto-card",style:{borderColor:item.color+"40"}});
+    const h=div({style:{display:"flex",justifyContent:"space-between",alignItems:"center"}});
+    const left=div({});
+    left.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9",fontWeight:"500"}},[item.icon+" "+item.title]));
+    left.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"3px"}},[item.sub]));
+    h.appendChild(left);
+    h.appendChild(div({style:{fontSize:"18px",fontFamily:"'Syne'",fontWeight:"700",color:item.color}},["+"+fmt(item.amount)]));
+    card.appendChild(h);
+    const bar=div({className:"bar-track"});
+    const fill=div({style:{height:"100%",borderRadius:"2px",background:item.color,width:item.barW+"%"}});
+    bar.appendChild(fill);
+    card.appendChild(bar);
+    wrap.appendChild(card);
+  });
+
+  const vacCard=div({className:"auto-card",style:{borderColor:"rgba(255,166,0,0.25)",background:"rgba(255,166,0,0.04)"}});
+  const vh=div({style:{display:"flex",justifyContent:"space-between",alignItems:"center"}});
+  const vl=div({});
+  vl.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9",fontWeight:"500"}},["🏖 Provision vacances"]));
+  vl.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"3px"}},["10,65% × brut de base — provision séparée"]));
+  vh.appendChild(vl);
+  vh.appendChild(div({style:{fontSize:"18px",fontFamily:"'Syne'",fontWeight:"700",color:"#ffa600"}},[fmt(provVac)]));
+  vacCard.appendChild(vh);
+  vacCard.appendChild(div({style:{fontSize:"11px",color:"#666",marginTop:"8px"}},["↗ Non inclus dans le brut · Voir onglet 🏖 Vacances"]));
+  wrap.appendChild(vacCard);
+
+  // Brut recap
+  const br=div({className:"brut-recap"});
+  [[`Heures & retenues`,"#888",fmt(heuresBase),"#e8e4d9"],
+   ["+ Jours fériés","#7eb8ff","+"+fmt(joursFeeries),"#7eb8ff"],
+   ["+ 13ème prorata","#c8f060","+"+fmt(treizieme),"#c8f060"]].forEach(([l,lc,v,vc])=>{
+    const r=div({style:{display:"flex",justifyContent:"space-between",fontSize:"13px",padding:"5px 0"}});
+    r.appendChild(span({style:{color:lc}},[l]));
+    r.appendChild(span({style:{color:vc}},[v]));
+    br.appendChild(r);
+  });
+  br.appendChild(div({style:{height:"1px",background:"#1e2433",margin:"8px 0"}}));
+  const tot=div({style:{display:"flex",justifyContent:"space-between",fontFamily:"'Syne'",fontWeight:"700",fontSize:"16px",padding:"5px 0"}});
+  tot.appendChild(span({},[" Brut total"]));
+  tot.appendChild(span({},[fmt(brutTotal)]));
+  br.appendChild(tot);
+  wrap.appendChild(br);
+
+  pane.appendChild(wrap);
+}
+
+// ─── CHARGES ─────────────────────────────────────────────────────────────
+function renderCharges(){
+  const data=getCurrentData();
+  const {brutTotal}=calc(data);
+  const pane=document.getElementById("pane-charges");
+  pane.innerHTML="";
+  const wrap=div({});
+  wrap.appendChild(div({className:"section-title"},["Charges & cotisations"]));
+
+  const baseCard=div({className:"card",style:{background:"rgba(255,107,107,0.06)",border:"1px solid rgba(255,107,107,0.15)",marginBottom:"16px"}});
+  baseCard.appendChild(div({style:{fontSize:"11px",color:"#888",letterSpacing:"0.08em",textTransform:"uppercase"}},["Base de calcul (brut)"]));
+  baseCard.appendChild(div({style:{fontSize:"22px",fontFamily:"'Syne'",fontWeight:"700",color:"#e8e4d9",marginTop:"4px"}},[fmt(brutTotal)]));
+  wrap.appendChild(baseCard);
+
+  data.charges.forEach(ch=>{
+    const montant=brutTotal*(parseFloat(ch.taux)||0)/100;
+    const card=div({className:"card"});
+    const topRow=div({className:"row-flex"});
+    const labelSpan=span({style:{flex:"1",fontSize:"14px",color:"#e8e4d9",cursor:"text"}});
+    labelSpan.textContent=ch.label+" ";
+    labelSpan.appendChild(span({style:{color:"#444",fontSize:"11px"}},["✎"]));
+    labelSpan.onclick=()=>{
+      const inp2=el("input",{type:"text",value:ch.label,
+        style:{flex:"1",fontSize:"14px",background:"transparent",border:"none",outline:"none",fontFamily:"'DM Mono',monospace",color:"#e8e4d9",width:"100%",borderBottom:"1px solid #c8f060",paddingBottom:"2px"},
+        onblur:e=>{ch.label=e.target.value;persistCurrent(data);renderPane("charges");}
+      });
+      inp2.onkeydown=e=>{if(e.key==="Enter")inp2.blur();};
+      labelSpan.replaceWith(inp2);inp2.focus();
+    };
+    topRow.appendChild(labelSpan);
+    topRow.appendChild(btn({className:"del-btn",onclick:()=>{data.charges=data.charges.filter(c=>c.id!==ch.id);persistCurrent(data);renderPane("charges");}},["×"]));
+    card.appendChild(topRow);
+
+    const fields=div({className:"fields-row"});
+    const g1=div({className:"input-group"});
+    g1.appendChild(div({className:"input-label"},["Taux (%)"]));
+    const i1=inp({type:"number",inputmode:"decimal",min:"0",max:"100",step:"0.01",value:ch.taux});
+    Object.assign(i1.style,{color:"#ff8a80",fontSize:"15px",fontFamily:"'DM Mono'",textAlign:"right",width:"100%",padding:"6px 0",borderBottom:"1px solid #2a3050",background:"transparent",border:"none",outline:"none",borderBottom:"1px solid #2a3050"});
+    i1.oninput=e=>{ch.taux=e.target.value;persistCurrent(data);renderPane("charges");};
+    g1.appendChild(i1);
+    fields.appendChild(g1);
+    const g2=div({className:"input-group",style:{flex:"2",alignItems:"flex-end"}});
+    g2.appendChild(div({className:"input-label"},["Montant retenu"]));
+    g2.appendChild(div({style:{fontSize:"14px",fontFamily:"'DM Mono'",textAlign:"right",color:"#ff8a80",padding:"6px 0",borderBottom:"1px solid #2a3050"}},["−"+fmt(montant)]));
+    fields.appendChild(g2);
+    card.appendChild(fields);
+    wrap.appendChild(card);
+  });
+
+  wrap.appendChild(btn({className:"add-btn",onclick:()=>{
+    const n={id:nextId++,label:"Nouvelle charge",taux:0};
+    data.charges.push(n);persistCurrent(data);renderPane("charges");
+  }},["＋ Ajouter une charge"]));
+  pane.appendChild(wrap);
+}
+
+// ─── VACANCES ─────────────────────────────────────────────────────────────
+function renderVacances(){
+  const data=getCurrentData();
+  const {heuresBase,provVac}=calc(data);
+  const pane=document.getElementById("pane-vacances");
+  pane.innerHTML="";
+  const wrap=div({});
+  wrap.appendChild(div({className:"section-title"},["Provision vacances"]));
+
+  // Cagnotte
+  const vacCard=div({className:"vac-card"});
+  vacCard.appendChild(div({style:{fontSize:"10px",letterSpacing:"0.2em",color:"#888",textTransform:"uppercase",marginBottom:"8px"}},["CAGNOTTE CUMULÉE"]));
+  const amtDiv=div({style:{fontFamily:"'Syne',sans-serif",fontWeight:"800",fontSize:"40px",color:"#ffa600",letterSpacing:"-0.02em"}});
+  amtDiv.textContent=fmt(vacancesCumul);
+  vacCard.appendChild(amtDiv);
+  vacCard.appendChild(div({style:{fontSize:"12px",color:"#888",marginTop:"6px"}},["Provision accumulée non utilisée"]));
+  const editVacBtn=btn({className:"vac-edit-btn",onclick:()=>{
+    const inp2=inp({type:"number",inputmode:"decimal",min:"0",step:"0.01",value:vacancesCumul});
+    Object.assign(inp2.style,{fontSize:"36px",fontFamily:"'Syne',sans-serif",fontWeight:"800",color:"#ffa600",textAlign:"center",width:"100%",background:"transparent",border:"none",outline:"none",borderBottom:"2px solid rgba(255,166,0,0.6)",paddingBottom:"4px"});
+    amtDiv.replaceWith(inp2);editVacBtn.style.display="none";
+    const row=div({className:"confirm-row",style:{marginTop:"10px"}});
+    row.appendChild(btn({className:"confirm-no",onclick:()=>renderPane("vacances")},["Annuler"]));
+    row.appendChild(btn({className:"confirm-yes-orange",onclick:()=>{const v=parseFloat(inp2.value);if(!isNaN(v)){vacancesCumul=round2(Math.max(0,v));saveVac(vacancesCumul);}renderPane("vacances");}},["Valider ✓"]));
+    vacCard.appendChild(row);
+  }},["✎ Modifier le montant"]);
+  vacCard.appendChild(editVacBtn);
+  wrap.appendChild(vacCard);
+
+  // Ce mois
+  const moisCard=div({className:"card",style:{marginBottom:"14px"}});
+  moisCard.appendChild(div({style:{fontSize:"11px",color:"#888",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:"8px"}},["Provision ce mois · "+MOIS_LABELS[curMois]+" "+curAnnee]));
+  const moisRow=div({style:{display:"flex",justifyContent:"space-between",alignItems:"center"}});
+  const moisLeft=div({});
+  moisLeft.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9"}},["10,65% × brut de base"]));
+  moisLeft.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"3px"}},["Base : "+fmt(heuresBase)]));
+  moisRow.appendChild(moisLeft);
+  moisRow.appendChild(div({style:{fontSize:"22px",fontFamily:"'Syne'",fontWeight:"700",color:"#ffa600"}},[fmt(provVac)]));
+  moisCard.appendChild(moisRow);
+  wrap.appendChild(moisCard);
+
+  // Add button
+  const addBtn=btn({className:"vac-add-full",onclick:()=>{
+    const conf=div({className:"card",style:{marginBottom:"10px"}});
+    conf.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9",marginBottom:"12px",textAlign:"center"}},["Ajouter ",span({style:{color:"#ffa600",fontWeight:"700"}},[fmt(provVac)])," à la cagnotte ?"]));
+    const row=div({className:"confirm-row"});
+    row.appendChild(btn({className:"confirm-no",onclick:()=>renderPane("vacances")},["Annuler"]));
+    row.appendChild(btn({className:"confirm-yes-green",onclick:()=>{vacancesCumul=round2(vacancesCumul+provVac);saveVac(vacancesCumul);renderPane("vacances");}},["Confirmer ✓"]));
+    conf.appendChild(row);
+    addBtn.replaceWith(conf);
+  }},["＋ Ajouter ce mois à la cagnotte ("+fmt(provVac)+")"]);
+  wrap.appendChild(addBtn);
+
+  // Use button
+  if(vacancesCumul>0){
+    const useBtn=btn({className:"vac-use-full",style:{marginTop:"10px"},onclick:()=>{
+      const conf=div({className:"card",style:{marginTop:"10px"}});
+      conf.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9",marginBottom:"4px",textAlign:"center"}},["Utiliser ",span({style:{color:"#ffa600",fontWeight:"700"}},[fmt(vacancesCumul)])," ?"]));
+      conf.appendChild(div({style:{fontSize:"11px",color:"#888",textAlign:"center",marginBottom:"12px"}},["La cagnotte sera remise à zéro"]));
+      const row=div({className:"confirm-row"});
+      row.appendChild(btn({className:"confirm-no",onclick:()=>renderPane("vacances")},["Annuler"]));
+      row.appendChild(btn({className:"confirm-yes",onclick:()=>{vacancesCumul=0;saveVac(0);renderPane("vacances");}},["Utiliser & remettre à 0"]));
+      conf.appendChild(row);
+      useBtn.replaceWith(conf);
+    }},["🏖 Utiliser la cagnotte ("+fmt(vacancesCumul)+")"]);
+    wrap.appendChild(useBtn);
+  }
+
+  pane.appendChild(wrap);
+}
+
+// ─── HISTORIQUE ───────────────────────────────────────────────────────────
+function renderHistorique(){
+  const pane=document.getElementById("pane-historique");
+  pane.innerHTML="";
+  const wrap=div({});
+  wrap.appendChild(div({className:"section-title"},["Historique"]));
+
+  const keys=Object.keys(allMonths).sort().reverse();
+  if(keys.length===0){
+    wrap.appendChild(div({style:{textAlign:"center",color:"#555",fontSize:"13px",padding:"40px 0"}},["Aucun mois enregistré.\nLes données sont sauvegardées automatiquement."]));
+  }
+  const curKey=monthKey(curMois,curAnnee);
+  keys.forEach(k=>{
+    const d=allMonths[k];
+    const [y,mo]=k.split("-");
+    const c=calc(d);
+    const isCur=k===curKey;
+    const row=div({className:"hist-row"+(isCur?" hist-row-current":""),onclick:()=>{
+      curMois=parseInt(mo)-1;curAnnee=parseInt(y);setTab("recap");renderMoisPicker();
+    }});
+    const top=div({style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"8px"}});
+    const left=div({});
+    left.appendChild(div({style:{fontFamily:"'Syne',sans-serif",fontWeight:"700",fontSize:"15px",color:isCur?"#c8f060":"#e8e4d9"}},[MOIS_LABELS[parseInt(mo)-1]+" "+y]));
+    left.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},[c.totalHeures+"h travaillées"]));
+    const right=div({style:{textAlign:"right"}});
+    right.appendChild(div({style:{fontFamily:"'DM Mono',monospace",fontWeight:"600",fontSize:"16px",color:"#c8f060"}},[fmt(c.net)]));
+    right.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},["net"]));
+    top.appendChild(left);top.appendChild(right);
+    row.appendChild(top);
+    const chips=div({style:{display:"flex",gap:"8px",flexWrap:"wrap"}});
+    const c1=div({className:"hist-chip"});
+    c1.appendChild(span({style:{color:"#888"}},["Brut"]));
+    c1.appendChild(span({style:{color:"#e8e4d9",marginLeft:"6px"}},[fmt(c.brutTotal)]));
+    const c2=div({className:"hist-chip"});
+    c2.appendChild(span({style:{color:"#888"}},["Charges"]));
+    c2.appendChild(span({style:{color:"#ff8a80",marginLeft:"6px"}},["−"+fmt(c.totalCharges)]));
+    chips.appendChild(c1);chips.appendChild(c2);
+    if(isCur) chips.appendChild(div({style:{background:"rgba(200,240,96,0.08)",border:"1px solid rgba(200,240,96,0.2)",borderRadius:"8px",padding:"4px 10px",fontSize:"11px",color:"#c8f060",fontFamily:"'DM Mono',monospace"}},["En cours"]));
+    row.appendChild(chips);
+    wrap.appendChild(row);
+  });
+  pane.appendChild(wrap);
+}
+
+// ─── RÉCAP ────────────────────────────────────────────────────────────────
+function renderRecap(){
+  const data=getCurrentData();
+  const {heuresBase,joursFeeries,treizieme,brutTotal,provVac,totalCharges,net}=calc(data);
+  const pane=document.getElementById("pane-recap");
+  pane.innerHTML="";
+  const wrap=div({});
+
+  const titleRow=div({style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"14px"}});
+  titleRow.appendChild(div({style:{fontFamily:"'Syne',sans-serif",fontWeight:"700",fontSize:"18px",color:"#e8e4d9",letterSpacing:"-0.01em"}},["Récapitulatif"]));
+  titleRow.appendChild(div({style:{fontSize:"13px",color:"#ffa600",fontFamily:"'DM Mono'"}},[MOIS_LABELS[curMois]+" "+curAnnee]));
+  wrap.appendChild(titleRow);
+
+  // Heures card
+  const hCard=div({className:"recap-card"});
+  const hTitle=div({className:"recap-card-title"});
+  hTitle.appendChild(span({className:"dot",style:{background:"#c8f060"}}));
+  hTitle.appendChild(document.createTextNode(" Heures & gains"));
+  hCard.appendChild(hTitle);
+  data.categories.forEach(cat=>{
+    const m=(parseFloat(cat.heures)||0)*(parseFloat(cat.tauxHoraire)||0);
+    const r=div({className:"recap-row divrow"});
+    const l=div({});
+    l.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9"}},[cat.label]));
+    l.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},[cat.heures+"h × "+cat.tauxHoraire+"€"]));
+    r.appendChild(l);
+    r.appendChild(div({style:{fontSize:"14px",color:cat.type==="retenue"?"#ff8a80":"#e8e4d9",fontFamily:"'DM Mono'"}},[(cat.type==="retenue"?"−":"+")+fmt(m)]));
+    hCard.appendChild(r);
+  });
+  [[" Jours fériés","#7eb8ff","2,27% du brut de base","+"+fmt(joursFeeries)],
+   [" 13ème salaire (prorata)","#c8f060","× 0,0833 du brut de base","+"+fmt(treizieme)]].forEach(([l,lc,sub,v])=>{
+    const r=div({className:"recap-row divrow"});
+    const ld=div({});
+    ld.appendChild(div({style:{fontSize:"13px",color:lc}},[l]));
+    ld.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},[sub]));
+    r.appendChild(ld);
+    r.appendChild(div({style:{fontSize:"14px",color:lc,fontFamily:"'DM Mono'"}},[v]));
+    hCard.appendChild(r);
+  });
+  const hTot=div({className:"recap-total"});
+  hTot.appendChild(span({},[" Brut total"]));
+  hTot.appendChild(span({style:{color:"#c8f060"}},[fmt(brutTotal)]));
+  hCard.appendChild(hTot);
+  wrap.appendChild(hCard);
+
+  // Charges card
+  const cCard=div({className:"recap-card"});
+  const cTitle=div({className:"recap-card-title"});
+  cTitle.appendChild(span({className:"dot",style:{background:"#ff6b6b"}}));
+  cTitle.appendChild(document.createTextNode(" Charges"));
+  cCard.appendChild(cTitle);
+  data.charges.forEach(ch=>{
+    const m=brutTotal*(parseFloat(ch.taux)||0)/100;
+    const r=div({className:"recap-row divrow"});
+    const l=div({});
+    l.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9"}},[ch.label]));
+    l.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},[ch.taux+"% du brut"]));
+    r.appendChild(l);
+    r.appendChild(div({style:{fontSize:"14px",color:"#ff8a80",fontFamily:"'DM Mono'"}},["−"+fmt(m)]));
+    cCard.appendChild(r);
+  });
+  const cTot=div({className:"recap-total"});
+  cTot.appendChild(span({},[" Total charges"]));
+  cTot.appendChild(span({style:{color:"#ff8a80"}},["−"+fmt(totalCharges)]));
+  cCard.appendChild(cTot);
+  wrap.appendChild(cCard);
+
+  // Vacances card
+  const vCard=div({className:"recap-card",style:{border:"1px solid rgba(255,166,0,0.2)",background:"rgba(255,166,0,0.04)"}});
+  const vTitle=div({className:"recap-card-title",style:{color:"#ffa600"}});
+  vTitle.appendChild(span({className:"dot",style:{background:"#ffa600"}}));
+  vTitle.appendChild(document.createTextNode(" Provision vacances (hors brut)"));
+  vCard.appendChild(vTitle);
+  const vr1=div({className:"recap-row divrow"});
+  const vl1=div({});
+  vl1.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9"}},["Ce mois"]));
+  vl1.appendChild(div({style:{fontSize:"11px",color:"#555",marginTop:"2px"}},["10,65% du brut de base"]));
+  vr1.appendChild(vl1);
+  vr1.appendChild(div({style:{fontSize:"14px",color:"#ffa600",fontFamily:"'DM Mono'"}},[fmt(provVac)]));
+  vCard.appendChild(vr1);
+  const vr2=div({className:"recap-row"});
+  vr2.appendChild(div({style:{fontSize:"13px",color:"#e8e4d9"}},["Cagnotte cumulée"]));
+  vr2.appendChild(div({style:{fontSize:"14px",color:"#ffa600",fontFamily:"'DM Mono'",fontWeight:"600"}},[fmt(vacancesCumul)]));
+  vCard.appendChild(vr2);
+  wrap.appendChild(vCard);
+
+  // Net final
+  const nf=div({className:"net-final"});
+  nf.appendChild(div({style:{fontSize:"10px",letterSpacing:"0.15em",color:"#888",marginBottom:"10px",textTransform:"uppercase"}},["NET À PAYER · "+MOIS_LABELS[curMois].toUpperCase()+" "+curAnnee]));
+  nf.appendChild(div({style:{fontFamily:"'Syne',sans-serif",fontWeight:"800",fontSize:"40px",color:"#c8f060",letterSpacing:"-0.02em"}},[fmt(net)]));
+  nf.appendChild(div({style:{fontSize:"12px",color:"#555",marginTop:"8px",fontFamily:"'DM Mono'"}},["Soit "+(brutTotal>0?Math.round((net/brutTotal)*100):0)+"% du brut"]));
+  wrap.appendChild(nf);
+  pane.appendChild(wrap);
+}
+
+// ─── Month picker UI ──────────────────────────────────────────────────────
+function renderMoisPicker(){
+  const grid=document.getElementById("mois-picker-grid");
+  grid.innerHTML="";
+  MOIS_LABELS.forEach((m,i)=>{
+    const b=btn({className:"month-btn"+(curMois===i?" active":""),onclick:()=>{curMois=i;showMoisPicker=false;document.getElementById("mois-picker").classList.add("hidden");renderPane(currentTab);renderMoisPicker();}});
+    b.textContent=m.substring(0,3);
+    grid.appendChild(b);
+  });
+  const yp=document.getElementById("year-picker");
+  yp.innerHTML="";
+  [curAnnee-1,curAnnee,curAnnee+1].forEach(y=>{
+    const b=btn({className:"year-btn"+(curAnnee===y?" active":""),onclick:()=>{curAnnee=y;renderMoisPicker();renderPane(currentTab);}});
+    b.textContent=y;
+    yp.appendChild(b);
+  });
+}
+
+function toggleMoisPicker(){
+  showMoisPicker=!showMoisPicker;
+  const picker=document.getElementById("mois-picker");
+  if(showMoisPicker){picker.classList.remove("hidden");renderMoisPicker();}
+  else picker.classList.add("hidden");
+}
+
+function prevMois(){
+  if(curMois===0){curMois=11;curAnnee--;}else curMois--;
+  showMoisPicker=false;
+  document.getElementById("mois-picker").classList.add("hidden");
+  renderPane(currentTab);renderMoisPicker();
+}
+function nextMois(){
+  if(curMois===11){curMois=0;curAnnee++;}else curMois++;
+  showMoisPicker=false;
+  document.getElementById("mois-picker").classList.add("hidden");
+  renderPane(currentTab);renderMoisPicker();
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────
+renderMoisPicker();
+setTab("heures");
+</script>
+</body>
+</html>
